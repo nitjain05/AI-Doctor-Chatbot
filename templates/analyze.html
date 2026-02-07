@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="card">
+  <h2>Medical Image Analysis</h2>
+  <p>Upload a medical image (PNG/JPG). The system will process it using OpenCV.</p>
+
+  <form class="upload-form" method="POST" enctype="multipart/form-data">
+    <input type="file" name="medical_image" accept=".png,.jpg,.jpeg" required />
+    <button class="btn" type="submit">Analyze Image</button>
+  </form>
+
+  {% if result %}
+  <div class="result">
+    <h3>Analysis Result</h3>
+    <p>{{ result.result }}{% if result.confidence %} (Confidence: {{ result.confidence }}%) {% endif %}</p>
+  </div>
+  {% endif %}
+
+  {% if uploaded_image %}
+  <div class="image-preview">
+    <h4>Uploaded Image Preview</h4>
+    <img src="{{ uploaded_image }}" alt="Uploaded medical image" />
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
