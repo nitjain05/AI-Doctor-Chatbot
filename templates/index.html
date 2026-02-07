@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="card">
+  <h2>Welcome to the AI Doctor</h2>
+  <p>
+    This is a college micro project that demonstrates a basic medical chatbot and
+    a simple medical image analyzer using Python and OpenCV.
+  </p>
+  <div class="button-group">
+    <a class="btn" href="{{ url_for('image_analysis') }}">Start Image Analysis</a>
+    <a class="btn" href="{{ url_for('chatbot_page') }}">Open Chatbot</a>
+  </div>
+</section>
+
+<section class="card">
+  <h3>Project Highlights</h3>
+  <ul>
+    <li>Flask backend with simple routes.</li>
+    <li>OpenCV image processing (grayscale + resize).</li>
+    <li>Rule-based chatbot with keyword matching.</li>
+    <li>Clean, medical-themed UI (blue &amp; white).</li>
+  </ul>
+</section>
+{% endblock %}
