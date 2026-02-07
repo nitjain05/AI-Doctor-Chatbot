@@ -4,14 +4,14 @@ import os
 from datetime import datetime
 
 import cv2  # OpenCV for basic image processing
-from flask import Flask, jsonify, redirect, render_template, request, url_for
+from flask import Flask, jsonify, render_template, request, send_from_directory, url_for
 from werkzeug.utils import secure_filename
 
 # ------------------------------------------------------------
 # App configuration
 # ------------------------------------------------------------
 app = Flask(__name__)
-app.config["UPLOAD_FOLDER"] = os.path.join("static", "uploads")
+app.config["UPLOAD_FOLDER"] = "uploads"
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5 MB limit
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
@@ -82,7 +82,7 @@ def home():
     return render_template("index.html")
 
 
-@app.route("/image-analysis", methods=["GET", "POST"])
+@app.route("/analyze", methods=["GET", "POST"])
 def image_analysis():
     """Handle image upload and display analysis results."""
     result_data = None
@@ -96,11 +96,12 @@ def image_analysis():
             timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
             filename = f"{timestamp}_{filename}"
             save_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
             file.save(save_path)
 
             # Run dummy OpenCV analysis
             result_data = analyze_medical_image(save_path)
-            uploaded_image = url_for("static", filename=f"uploads/{filename}")
+            uploaded_image = url_for("uploaded_file", filename=filename)
         else:
             result_data = {
                 "result": "Please upload a valid PNG/JPG image.",
@@ -108,10 +109,16 @@ def image_analysis():
             }
 
     return render_template(
-        "image_analysis.html",
+        "analyze.html",
         result=result_data,
         uploaded_image=uploaded_image,
     )
+
+
+@app.route("/uploads/<path:filename>")
+def uploaded_file(filename):
+    """Serve uploaded images from the uploads folder."""
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
 @app.route("/chatbot")
